@@ -4,15 +4,13 @@
 #define RAD2DEG             52.29578  // convert radians to degrees
 #define SLOUCH_ANGLE        15.0      // allowable slouch angle (deg)
 #define SLOUCH_TIME         3000      // allowable slouch time (secs) 
-
-#define WATER_TIME          90000
+#define WATER_TIME          90000     // time to drink water
 
 
 float currentAngle;
 float targetAngle;
 unsigned long slouchStartTime;
 bool slouching;
-
 unsigned long waterTimer;
 bool water;
 
@@ -20,19 +18,13 @@ bool water;
 
 void setup() {
   Serial.begin(9600);
-
   // Initialize Circuit Playground
   CircuitPlayground.begin();
-
   targetAngle = 0;
-
-
 }
 
 
 void loop() {
-
-
   currentAngle = RAD2DEG * asin(-CircuitPlayground.motionZ() / GRAVITY);
 
   // set target angle on button press
@@ -62,7 +54,6 @@ void loop() {
   }
 
   //Drink water every 90 min
-
   if (!water) {
     waterTimer = millis();
     water = true;
