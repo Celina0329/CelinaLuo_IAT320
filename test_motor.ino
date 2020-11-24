@@ -8,45 +8,32 @@
 #define RAD2DEG             52.29578  // convert radians to degrees
 #define SLOUCH_ANGLE        15.0      // allowable slouch angle (deg)
 #define SLOUCH_TIME         3000      // allowable slouch time (secs) 
-#define LED_PIN             6       // pin NeoPixel is connected to
+#define LED_PIN             6         // pin NeoPixel is connected to
 #define VIBRATE_PIN         1         // pin vibrator is connected to
-
-#define REST_TIME           1200000
-#define STRETCH_TIME        5400000
-
-#define LED_COUNT 1
-
-// Declare our NeoPixel strip object:
-Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+#define REST_TIME           1200000   // rest time count
+#define STRETCH_TIME        5400000   // stretch time cound
+#define LED_COUNT 1                   // number of led count
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);// Declare our NeoPixel strip object:
 
 float currentAngle;
 float targetAngle;
 unsigned long slouchStartTime;
 bool slouching;
-
 unsigned long stretchTimer;
 bool stretch;
-
 unsigned long restTimer;
 bool rest;
-
 int Countdown;
-
-
 
 void setup() {
   Serial.begin(9600);
   CircuitPlayground.begin();
-
   targetAngle = 0;
-
   pinMode(VIBRATE_PIN, OUTPUT);
-
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();            // Turn OFF all pixels ASAP
   strip.setBrightness(10); // Set BRIGHTNESS to about 1/5 (max = 255)
 }
-
 
 void loop() {
   currentAngle = RAD2DEG * asin(-CircuitPlayground.motionZ() / GRAVITY);
@@ -84,10 +71,9 @@ void loop() {
     restTimer = millis();
     rest = true;
   }
-
+  // If resting time, flash green light 3 times and vibrate 3 times 
   if (rest == true) {
     if (millis() - restTimer > REST_TIME) {
-
       for (int i = 0; i < 3; i ++) {
         digitalWrite(VIBRATE_PIN, HIGH);
         colorWipe(strip.Color(  0, 255,   0), 100); // Green
@@ -100,12 +86,12 @@ void loop() {
     }
   }
 
-  //take a break every 90 min
+  //Take a break every 90 min
   if (!stretch) {
     stretchTimer = millis();
     stretch = true;
   }
-
+  // If resting time, vibrate, beep, and flash 5 times 
   if (stretch == true) {
     if (millis() - stretchTimer > STRETCH_TIME) {
       for (int i = 0; i < 5; i ++) {
@@ -122,6 +108,7 @@ void loop() {
   }
 }
 
+// To show color in NeoPixel
 void colorWipe(uint32_t color, int wait) {
   for (int i = 0; i < strip.numPixels(); i++) { // For each pixel in strip...
     strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
